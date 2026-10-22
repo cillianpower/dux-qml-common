@@ -23,6 +23,8 @@ Item {
     property real cellRadius: Style.cornerRadiusS
     property bool highlightWeekends: false
     property color weekendColor: Style.tertiary
+    // plain days: bare numbers, only the selected day filled
+    property bool plainDays: false
 
     signal dayClicked(date date)
 
@@ -176,7 +178,7 @@ Item {
                     easing.bezierCurve: Style.expressiveCurves.standard
                 }
             }
-            color: isSelected ? Style.primary : (inMonth ? Style.foregroundColor(Style.chipSurface, root.floatingWindow) : Style.withAlpha(Style.chipSurface, Style.stateLayerFocus))
+            color: isSelected ? Style.primary : root.plainDays ? "transparent" : (inMonth ? Style.foregroundColor(Style.chipSurface, root.floatingWindow) : Style.withAlpha(Style.chipSurface, Style.stateLayerFocus))
             border.width: isToday && !isSelected ? Style.outlineWidthFocused : 0
             border.color: Style.primary
 
