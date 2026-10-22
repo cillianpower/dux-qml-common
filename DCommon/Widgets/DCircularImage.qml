@@ -138,7 +138,9 @@ Rectangle {
     }
 
     AppIconRenderer {
-        anchors.centerIn: parent
+        // not anchors.centerIn: that floors a fractional offset (a 38.67 circle puts a 29 glyph at 4, not 4.83), a pixel or two off-centre
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
         width: Math.round(parent.width * 0.75)
         height: width
         visible: (root.activeImage.status !== Image.Ready || root.imageSource === "") && root.fallbackIcon !== ""
