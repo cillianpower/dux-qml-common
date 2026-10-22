@@ -47,8 +47,11 @@ Singleton {
         source: Qt.resolvedUrl("../assets/fonts/gochi-hand/GochiHand-Regular.ttf")
     }
 
+    // A font answering to material symbols' names can stand in for it.
+    readonly property string iconFontOverride: Quickshell.env("DMS_ICON_FONT") ?? ""
+
     FontLoader {
         id: materialSymbolsFont
-        source: Qt.resolvedUrl("../assets/fonts/material-design-icons/variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf")
+        source: iconFontOverride ? "file://" + iconFontOverride : Qt.resolvedUrl("../assets/fonts/material-design-icons/variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf")
     }
 }

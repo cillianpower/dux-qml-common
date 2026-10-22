@@ -176,6 +176,9 @@ Singleton {
     }
 
     function foregroundColor(baseColor, floatingWindow = false) {
+        // the shell's theme decides, so its surface options reach shared widgets too
+        if (typeof theme?.foregroundColor === "function")
+            return theme.foregroundColor(baseColor, floatingWindow);
         return blendAlpha(baseColor, floatingWindow ? floatingWindowForegroundAlpha : foregroundAlpha);
     }
 
