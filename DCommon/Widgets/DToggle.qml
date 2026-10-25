@@ -13,7 +13,7 @@ FocusScope {
     property string description: ""
     property color descriptionColor: Style.surfaceVariantText
     property bool hideText: false
-    property string checkedIcon: "check"
+    property string checkedIcon: Style.flatComponents ? "" : "check"
     property string uncheckedIcon: ""
     readonly property string thumbIcon: checked ? checkedIcon : uncheckedIcon
 
@@ -121,7 +121,7 @@ FocusScope {
         id: toggleTrack
 
         readonly property bool pressed: input.pressed
-        readonly property real thumbSize: pressed ? Style.switchThumbPressed : (toggle.checked || toggle.thumbIcon ? Style.switchThumbSelected : Style.switchThumbUnselected)
+        readonly property real thumbSize: pressed && !Style.flatComponents ? Style.switchThumbPressed : (toggle.checked || toggle.thumbIcon ? Style.switchThumbSelected : Style.switchThumbUnselected)
         readonly property real edgeLeft: (trackHeight - Style.switchThumbSelected) / 2
         readonly property real edgeRight: width - Style.switchThumbSelected - edgeLeft
         readonly property real thumbTarget: toggle.checked ? edgeRight : edgeLeft
@@ -131,11 +131,13 @@ FocusScope {
         anchors.right: parent.right
         anchors.rightMargin: showText ? Style.spacingM : 0
         anchors.verticalCenter: parent.verticalCenter
-        radius: Style.fullRadius(width, height)
+        radius: Style.pillRadius(width, height)
 
         color: {
             if (!toggle.enabled)
                 return toggle.checked ? Style.onSurface_12 : Style.withAlpha(Style.chipSurfaceNested, 0.12);
+            if (Style.flatComponents)
+                return toggle.checked ? Style.primary : Style.textTertiary;
             return toggle.checked ? Style.primary : Style.chipSurfaceNested;
         }
         border.width: toggle.checked ? 0 : Style.switchOutlineWidth
@@ -203,13 +205,15 @@ FocusScope {
 
             width: sizeSpring.value
             height: width
-            radius: Style.fullRadius(width, height)
+            radius: Style.pillRadius(width, height)
             x: input.mirrored ? toggleTrack.width - centerX - width / 2 : centerX - width / 2
             anchors.verticalCenter: parent.verticalCenter
 
             color: {
                 if (!toggle.enabled)
                     return toggle.checked ? Style.surface : Style.onSurface_38;
+                if (Style.flatComponents)
+                    return toggle.checked ? Style.onPrimary : Style.textSecondary;
                 if (toggle.checked)
                     return toggleTrack.pressed ? Style.primaryContainer : Style.onPrimary;
                 return toggleTrack.pressed ? Style.onSurfaceVariant : Style.outline;
