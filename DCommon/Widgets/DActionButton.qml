@@ -10,6 +10,14 @@ StyledButton {
     property bool iconFilled: false
     property color backgroundColor: "transparent"
     property color stateColor: iconColor
+    // flat: no container but for a surface's one primary action; a filled glyph carries a checked state
+    property bool primaryAction: false
+    readonly property bool showsFill: !Style.flatComponents || primaryAction
+    readonly property color restIconColor: {
+        if (showsFill || Qt.colorEqual(iconColor, Style.error))
+            return iconColor;
+        return iconFilled ? Style.surfaceText : Style.textSecondary;
+    }
     property bool circular: true
     property int buttonSize: Style.buttonHeightXS
     property var tooltipText: null
@@ -29,7 +37,7 @@ StyledButton {
     implicitWidth: buttonSize
     implicitHeight: buttonSize
     radius: Style.buttonRadius(width, height, buttonSize, pressed, circular)
-    color: enabled || backgroundColor.a === 0 ? backgroundColor : Style.onSurface_12
+    color: !showsFill ? "transparent" : enabled || backgroundColor.a === 0 ? backgroundColor : Style.onSurface_12
     Accessible.role: Accessible.Button
     Accessible.name: tooltipText || iconName
 
@@ -57,7 +65,7 @@ StyledButton {
 
     DColorAnimation {
         id: iconTween
-        to: Style.stateContent(root.iconColor, root.hovered, root.pressed)
+        to: Style.stateContent(root.restIconColor, root.hovered, root.pressed)
         animated: Style.flatComponents && !Style.reduceMotion
         duration: Style.expressiveDurations.expressiveFastEffects
     }
