@@ -8,6 +8,8 @@ Set `theme.radiusStrength` and `theme.fixedRadius` when injecting a theme. Older
 
 Use named tokens for fixed corners. Use `Style.fullRadius(width, height)` for pills and round controls, `Style.buttonRadius(width, height, sizeHeight, pressed, round)` for button states, and `Style.scaledRadius(baseRadius, limit)` for component metrics such as slider track corners. `cornerRadiusFull` remains a compatibility sentinel; use the dimension-aware helper for new code.
 
+Under the shell's flat component style (`Style.flatComponents`), `Style.pillRadius(width, height)` is half the shorter side even with a fixed radius, for toggles, slider thumbs, badges and counts. Otherwise it is `fullRadius`.
+
 Strength is a DMS preference, not a Material token. Radii scale by `strength / 50` on both sides of the default, so each slider step moves the same amount. Legacy medium radii map to the nearest integer strength: 0 → 0, 6 → 25, 12 → 50, 16 → 67, 24 and above → 100. Component token corrections can change individual shapes after migration.
 
 ## Component baselines
