@@ -518,7 +518,7 @@ Singleton {
     }
     readonly property int blurBorderWidth: (settings?.blurBorderEnabled ?? false) ? 1 : 0
 
-    readonly property bool enableRippleEffects: settings?.enableRippleEffects ?? true
+    readonly property bool enableRippleEffects: (settings?.enableRippleEffects ?? true) && !flatComponents
     readonly property bool popoutElevationEnabled: settings?.popoutElevationEnabled ?? true
     readonly property bool scrollbarsEnabled: settings?.scrollbarsEnabled ?? true
     readonly property int textRenderType: settings?.textRenderType ?? Style.TextRenderType.Qt
