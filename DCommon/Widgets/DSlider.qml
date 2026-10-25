@@ -49,6 +49,8 @@ Controls.Control {
     property int decimals: 0
     property bool alwaysShowValue: false
     property string size: "s"
+    readonly property bool flatBar: Style.flatComponents && Style.sliderStyle === "bar"
+    readonly property bool handleShown: !flatBar || isDragging || visualFocus
     readonly property real handleWidth: Style.sliderHandleWidth
     readonly property real pressedHandleWidth: Style.sliderHandleWidthPressed
     readonly property bool containsMouse: sliderMouseArea.containsMouse
@@ -58,7 +60,7 @@ Controls.Control {
     property color thumbOutlineColor
     property color fillColor: Style.primary
     property color fillTextColor: Style.onPrimary
-    property color trackColor: Style.secondaryContainer
+    property color trackColor: Style.flatComponents ? Style.textTertiary : Style.secondaryContainer
     property Gradient trackGradient: null
     property color trackTextColor: Style.onSecondaryContainer
     property bool usePopupTransparency: !Style.isFloatingWindow(slider)
@@ -138,7 +140,12 @@ Controls.Control {
         }
     }
     readonly property real outsideCorner: Style.scaledRadius(trackCornerRadius, trackHeight / 2)
-    readonly property real insideCorner: Style.scaledRadius(Style.sliderTrackInsideCornerRadius, trackHeight / 2)
+    // flat: a pill on both sides of the thumb, square where a bar's fill meets its track
+    readonly property real insideCorner: {
+        if (!Style.flatComponents)
+            return Style.scaledRadius(Style.sliderTrackInsideCornerRadius, trackHeight / 2);
+        return handleShown ? Style.pillRadius(trackHeight, trackHeight) : 0;
+    }
     readonly property real visualRatio: mirrored ? 1 - ratio : ratio
     readonly property int tickCount: {
         if (step <= 1)
@@ -365,7 +372,7 @@ Controls.Control {
                 bottomLeftRadius: topLeftRadius
                 topRightRadius: slider.mirrored ? slider.insideCorner : slider.outsideCorner
                 bottomRightRadius: topRightRadius
-                color: !slider.enabled ? Style.onSurface_12 : slider.trackGradient ? "transparent" : Style.blendAlpha(slider.trackColor, slider.trackAlpha)
+                color: !slider.enabled ? Style.onSurface_12 : slider.trackGradient ? "transparent" : Style.flatComponents ? slider.trackColor : Style.blendAlpha(slider.trackColor, slider.trackAlpha)
                 visible: width > 0
 
                 Loader {
@@ -408,9 +415,10 @@ Controls.Control {
             StyledRect {
                 id: sliderHandle
 
-                width: sliderMouseArea.pressed ? slider.pressedHandleWidth : slider.handleWidth
-                height: slider.handleHeight
-                radius: Style.fullRadius(width, height)
+                width: !slider.handleShown ? 0 : sliderMouseArea.pressed ? slider.pressedHandleWidth : slider.handleWidth
+                height: slider.handleShown ? slider.handleHeight : slider.trackHeight
+                radius: Style.pillRadius(width, height)
+                opacity: slider.handleShown ? 1 : 0
                 x: sliderTrack.handleLeft
                 anchors.verticalCenter: parent.verticalCenter
                 color: slider.enabled ? slider.fillColor : Style.onSurface_38
@@ -418,6 +426,22 @@ Controls.Control {
 
                 Behavior on width {
                     enabled: Style.currentAnimationSpeed !== Style.AnimationSpeed.None
+                    DAnim {
+                        duration: Style.expressiveDurations.expressiveEffects
+                        easing.bezierCurve: Style.expressiveCurves.standard
+                    }
+                }
+
+                Behavior on height {
+                    enabled: slider.flatBar && Style.currentAnimationSpeed !== Style.AnimationSpeed.None
+                    DAnim {
+                        duration: Style.expressiveDurations.expressiveEffects
+                        easing.bezierCurve: Style.expressiveCurves.standard
+                    }
+                }
+
+                Behavior on opacity {
+                    enabled: slider.flatBar && Style.currentAnimationSpeed !== Style.AnimationSpeed.None
                     DAnim {
                         duration: Style.expressiveDurations.expressiveEffects
                         easing.bezierCurve: Style.expressiveCurves.standard
