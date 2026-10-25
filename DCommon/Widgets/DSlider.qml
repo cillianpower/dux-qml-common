@@ -319,7 +319,8 @@ Controls.Control {
             id: sliderTrack
 
             readonly property real travel: Math.max(0, width - slider.handleWidth)
-            readonly property real handleLeft: slider.handleWidth / 2 + travel * slider.visualRatio - sliderHandle.width / 2
+            // a thumbless bar fills to its ends; its thumb grows in place as it appears
+            readonly property real handleLeft: slider.flatBar ? (width - sliderHandle.width) * slider.visualRatio : slider.handleWidth / 2 + travel * slider.visualRatio - sliderHandle.width / 2
             readonly property real gap: Style.sliderHandleGap
             readonly property real filledStart: slider.mirrored ? sliderHandle.x + sliderHandle.width + gap : 0
             readonly property real filledEnd: slider.mirrored ? width : sliderHandle.x - gap
