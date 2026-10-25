@@ -37,6 +37,8 @@ Singleton {
     property var settings: null
 
     readonly property bool isLightMode: theme?.isLightMode ?? false
+    // the shell's componentStyle "flat": no state layers, pills, text levels, flat components
+    readonly property bool flatComponents: theme?.flatComponents ?? false
 
     readonly property color primary: theme?.primary ?? "#D0BCFF"
     readonly property color contrastDark: theme?.contrastDark ?? "#000000"
