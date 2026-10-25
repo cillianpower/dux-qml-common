@@ -155,6 +155,8 @@ Singleton {
     readonly property color surfaceTextHover: theme?.surfaceTextHover ?? withAlpha(surfaceText, 0.08)
     readonly property color surfaceTextSecondary: theme?.surfaceTextSecondary ?? withAlpha(surfaceText, 0.6)
     readonly property color surfaceTextMedium: theme?.surfaceTextMedium ?? withAlpha(surfaceText, 0.7)
+    readonly property color textSecondary: theme?.textSecondary ?? withAlpha(surfaceText, 0.6)
+    readonly property color textTertiary: theme?.textTertiary ?? withAlpha(surfaceText, 0.3)
 
     readonly property color outlineButton: theme?.outlineButton ?? withAlpha(outline, 0.5)
     readonly property real layerOutlineOpacity: theme?.layerOutlineOpacity ?? 0
