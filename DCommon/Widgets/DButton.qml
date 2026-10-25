@@ -13,6 +13,10 @@ StyledButton {
     property int iconSize: root.buttonHeight <= Style.buttonHeightS ? Style.iconSizeMedium : Style.iconSize
     property color backgroundColor: Style.buttonBg
     property color textColor: Style.buttonText
+    // flat: a text button; only the one primary action on a surface keeps its fill
+    property bool primaryAction: false
+    readonly property bool showsFill: !Style.flatComponents || primaryAction
+    readonly property color restTextColor: showsFill || Qt.colorEqual(textColor, Style.error) ? textColor : Style.textSecondary
     property int buttonHeight: Style.buttonHeightS
     horizontalPadding: {
         if (buttonHeight <= Style.buttonHeightXS)
@@ -35,8 +39,8 @@ StyledButton {
     readonly property real restRadius: Style.buttonRadius(width, height, buttonHeight, false, shape === "round")
     readonly property real pressedRadius: Style.buttonRadius(width, height, buttonHeight, true, shape === "round")
     property real pressProgress: pressed ? 1 : 0
-    radius: restRadius + (pressedRadius - restRadius) * pressProgress
-    color: enabled ? backgroundColor : Style.onSurface_12
+    radius: Style.flatComponents ? Math.min(Style.windowRadius, height / 2) : restRadius + (pressedRadius - restRadius) * pressProgress
+    color: !showsFill ? "transparent" : enabled ? backgroundColor : Style.onSurface_12
     scale: (enableScaleAnimation && pressed) ? Style.pressScale : 1.0
     Accessible.role: Accessible.Button
     Accessible.name: text || tooltipText || iconName
@@ -64,7 +68,7 @@ StyledButton {
 
     DColorAnimation {
         id: contentTween
-        to: Style.stateContent(root.textColor, root.hovered, root.pressed)
+        to: Style.stateContent(root.restTextColor, root.hovered, root.pressed)
         animated: Style.flatComponents && !Style.reduceMotion
         duration: Style.expressiveDurations.expressiveFastEffects
     }
