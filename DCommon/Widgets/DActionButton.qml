@@ -52,7 +52,14 @@ StyledButton {
         name: root.iconName
         size: root.iconSize
         filled: root.iconFilled
-        color: root.enabled ? root.iconColor : Style.onSurface_38
+        color: root.enabled ? iconTween.value : Style.onSurface_38
+    }
+
+    DColorAnimation {
+        id: iconTween
+        to: Style.stateContent(root.iconColor, root.hovered, root.pressed)
+        animated: Style.flatComponents && !Style.reduceMotion
+        duration: Style.expressiveDurations.expressiveFastEffects
     }
 
     StateLayer {
