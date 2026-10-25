@@ -242,6 +242,11 @@ Singleton {
         return Shape.fullRadius(width, height, shapeScale, fixedRadius);
     }
 
+    // flat: a pill whatever the radius mode, past the fixed radius's cap
+    function pillRadius(width, height) {
+        return flatComponents ? Math.max(0, Math.min(width, height)) / 2 : fullRadius(width, height);
+    }
+
     function buttonRadius(width, height, sizeHeight, pressed, round) {
         if (!pressed && round)
             return fullRadius(width, height);
