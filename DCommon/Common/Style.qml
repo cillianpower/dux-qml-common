@@ -520,6 +520,8 @@ Singleton {
     }
     readonly property int blurBorderWidth: (settings?.blurBorderEnabled ?? false) ? 1 : 0
 
+    // flat sliders: thumb (a thin track with a small round thumb) or bar (a filled bar, its thumb only on focus or drag)
+    readonly property string sliderStyle: settings?.sliderStyle ?? "thumb"
     readonly property bool enableRippleEffects: (settings?.enableRippleEffects ?? true) && !flatComponents
     readonly property bool popoutElevationEnabled: settings?.popoutElevationEnabled ?? true
     readonly property bool scrollbarsEnabled: settings?.scrollbarsEnabled ?? true
