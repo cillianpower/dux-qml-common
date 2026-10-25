@@ -14,10 +14,17 @@ StyledButton {
     property bool _pooled: false
     property bool isHovered: hovered
     readonly property color contentColor: colorForRole(Style.onSurface)
-    readonly property color supportingContentColor: colorForRole(Style.onSurfaceVariant)
+    readonly property color supportingContentColor: supportingTween.value
 
     function colorForRole(idleColor) {
         return !enabled ? Style.onSurface_38 : isSelected || (!externalHighlight && visualFocus) ? Style.onSelectedContainer : idleColor;
+    }
+
+    DColorAnimation {
+        id: supportingTween
+        to: Style.stateContent(root.colorForRole(Style.onSurfaceVariant), root.isHovered, root.pressed)
+        animated: Style.flatComponents && !Style.reduceMotion
+        duration: Style.expressiveDurations.expressiveFastEffects
     }
 
     signal contextMenuRequested(real mouseX, real mouseY)

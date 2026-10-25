@@ -29,7 +29,7 @@ StyledButton {
 
     implicitWidth: Math.min(maximumWidth, Math.max(contentRow.implicitWidth + horizontalPadding * 2, minimumWidth))
     implicitHeight: wrapText ? Math.max(buttonHeight, contentRow.implicitHeight + Style.spacingS * 2) : buttonHeight
-    readonly property color contentColor: enabled ? textColor : Style.onSurface_38
+    readonly property color contentColor: enabled ? contentTween.value : Style.onSurface_38
     readonly property real maximumLabelWidth: Math.max(0, maximumWidth - horizontalPadding * 2 - (busy || iconName ? iconSize + contentRow.spacing : 0))
 
     readonly property real restRadius: Style.buttonRadius(width, height, buttonHeight, false, shape === "round")
@@ -60,6 +60,13 @@ StyledButton {
             duration: Style.expressiveDurations.expressiveFastSpatial
             easing.bezierCurve: Style.expressiveCurves.expressiveFastSpatial
         }
+    }
+
+    DColorAnimation {
+        id: contentTween
+        to: Style.stateContent(root.textColor, root.hovered, root.pressed)
+        animated: Style.flatComponents && !Style.reduceMotion
+        duration: Style.expressiveDurations.expressiveFastEffects
     }
 
     StateLayer {

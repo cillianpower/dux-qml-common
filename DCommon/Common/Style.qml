@@ -544,6 +544,17 @@ Singleton {
         };
     }
 
+    // flat: a control's content rises to full contrast on hover and dims a little on press, in place of a state layer
+    readonly property real pressedContentAlpha: 0.8
+    function stateContent(base, hovered, pressed) {
+        const c = flatComponents ? toColor(base) : null;
+        if (!c)
+            return base;
+        if (pressed)
+            return Qt.rgba(c.r, c.g, c.b, pressedContentAlpha);
+        return hovered ? Qt.rgba(c.r, c.g, c.b, 1) : c;
+    }
+
     function toColor(c) {
         if (!c)
             return null;
