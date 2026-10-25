@@ -33,3 +33,39 @@ test("a theme override replaces the slot hue", () => {
     const overridden = context.derive(hex("#D0BCFF"), false, { "blue": "#00c853" });
     assert.ok(context.differenceDegrees(context.toHct(hex("#00c853")).hue, context.toHct(overridden.blue.container).hue) < 1);
 });
+
+test("wallpaper alerts take the key's own hue, muted", () => {
+    for (const key of ["#7fbbb3", "#ff2d95", "#7aa2f7"]) {
+        const { alert, soft } = context.alerts(hex(key), false, "wallpaper");
+        const keyHue = context.toHct(hex(key)).hue;
+        for (const c of [alert, soft]) {
+            const h = context.toHct(c);
+            assert.ok(context.differenceDegrees(keyHue, h.hue) < 3, `${key} hue`);
+            assert.ok(h.chroma <= context.ALERT_CHROMA + 1, `${key} not muted`);
+        }
+    }
+});
+
+test("harmonised alerts stay red and orange, bent toward the key", () => {
+    const key = hex("#7aa2f7");
+    const { alert, soft } = context.alerts(key, false, "harmonised");
+    const keyHue = context.toHct(key).hue;
+    for (const [c, anchor] of [[alert, context.ANCHOR_HUES.red], [soft, context.ANCHOR_HUES.orange]]) {
+        const hue = context.toHct(c).hue;
+        assert.ok(context.differenceDegrees(hue, anchor) <= 16, "left its anchor");
+        assert.ok(context.differenceDegrees(hue, keyHue) < context.differenceDegrees(anchor, keyHue), "not bent toward the key");
+    }
+});
+
+test("a hueless key falls back to red and orange, and every alert reads on its surface", () => {
+    for (const source of ["wallpaper", "harmonised"]) {
+        for (const isLight of [false, true]) {
+            const { alert, soft } = context.alerts(hex(isLight ? "#000000" : "#ffffff"), isLight, source);
+            assert.ok(context.differenceDegrees(context.toHct(alert).hue, context.ANCHOR_HUES.red) < 3, `${source} red`);
+            assert.ok(context.differenceDegrees(context.toHct(soft).hue, context.ANCHOR_HUES.orange) < 3, `${source} orange`);
+            const surface = hex(isLight ? "#f9f9f9" : "#131315");
+            for (const c of [alert, soft])
+                assert.ok(context.ratio(c, surface) >= 4.5, `${source} ${isLight ? "light" : "dark"} unreadable`);
+        }
+    }
+});

@@ -75,3 +75,32 @@ function derive(primary, isLight, overrides) {
     }
     return accents;
 }
+
+var ALERT_HUE_MIN_CHROMA = 4;
+var ALERT_CHROMA = 36;
+var ALERT_SOFT_CHROMA = 24;
+var ALERT_TONE_DARK = 72;
+var ALERT_TONE_LIGHT = 42;
+var ALERT_SOFT_TONE_SHIFT = 6;
+
+// The two alert colours of a monochrome interface, muted. "wallpaper": the key's own hue for both; "harmonised": red
+// and orange bent toward it. A key with no hue of its own (a monochrome theme) falls back to the anchor red and orange.
+function alerts(key, isLight, source) {
+    const k = Hct.toHct(key);
+    const hueless = k.chroma < ALERT_HUE_MIN_CHROMA;
+    const tone = isLight ? ALERT_TONE_LIGHT : ALERT_TONE_DARK;
+    const softTone = isLight ? tone + ALERT_SOFT_TONE_SHIFT : tone - ALERT_SOFT_TONE_SHIFT;
+    let hue = ANCHOR_HUES.red;
+    let softHue = ANCHOR_HUES.orange;
+    if (!hueless && source === "harmonised") {
+        hue = Hct.harmonize(ANCHOR_HUES.red, k.hue);
+        softHue = Hct.harmonize(ANCHOR_HUES.orange, k.hue);
+    } else if (!hueless) {
+        hue = k.hue;
+        softHue = k.hue;
+    }
+    return {
+        "alert": Hct.fromHct(hue, ALERT_CHROMA, tone),
+        "soft": Hct.fromHct(softHue, ALERT_SOFT_CHROMA, softTone)
+    };
+}
