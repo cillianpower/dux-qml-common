@@ -329,7 +329,7 @@ FocusScope {
         anchors.verticalCenter: parent.verticalCenter
         radius: root.triggerRadius
         color: {
-            const lit = dropdown.hovered || root.menuVisible;
+            const lit = dropdown.hovered && !Style.flatComponents || root.menuVisible;
             if (!root.showLabel)
                 return root.enabled && lit ? Style.withAlpha(Style.onSurface, Style.stateLayerHover) : "transparent";
             if (!root.enabled)
