@@ -97,6 +97,8 @@ Item {
     readonly property real trailingWidth: Math.max(Style.minimumTouchTargetSize, metrics.menuIconSize + metrics.menuSpace * 2)
     readonly property real leadingWidth: Math.max(Style.minimumTouchTargetSize, Math.ceil(leadingLabel.implicitWidth) + metrics.leadingSpace + metrics.trailingSpace + (iconName ? metrics.iconSize + metrics.iconSpacing : 0))
     readonly property color containerColor: {
+        if (Style.flatComponents)
+            return "transparent";
         switch (variant) {
         case "tonal":
             return Style.secondaryContainer;
@@ -109,6 +111,8 @@ Item {
         }
     }
     readonly property color contentColor: {
+        if (Style.flatComponents)
+            return Style.textSecondary;
         switch (variant) {
         case "tonal":
             return Style.onSecondaryContainer;
@@ -130,8 +134,10 @@ Item {
         id: segment
 
         property bool isTrailing: false
-        readonly property real outerRadius: Style.fullRadius(width, root.visualHeight)
+        readonly property real outerRadius: Style.flatComponents ? Math.min(Style.windowRadius, root.visualHeight / 2) : Style.fullRadius(width, root.visualHeight)
         property real innerRadius: {
+            if (Style.flatComponents)
+                return outerRadius;
             if (pressed)
                 return Math.min(outerRadius, root.metrics.activeInnerRadius);
             if (isTrailing && root.expanded)
@@ -139,22 +145,22 @@ Item {
             return Math.min(outerRadius, root.metrics.innerRadius);
         }
         readonly property bool outerOnLeft: isTrailing === I18n.isRtl
-        readonly property color labelColor: enabled ? root.contentColor : Style.onSurface_38
+        readonly property color labelColor: !enabled ? Style.onSurface_38 : Style.flatComponents ? Style.stateContent(root.contentColor, hovered, pressed) : root.contentColor
 
         height: root.height
         topInset: (height - root.visualHeight) / 2
         bottomInset: topInset
-        color: enabled ? root.containerColor : root.variant === "outlined" ? "transparent" : Style.onSurface_12
+        color: Style.flatComponents ? "transparent" : enabled ? root.containerColor : root.variant === "outlined" ? "transparent" : Style.onSurface_12
         radius: outerRadius
         topLeftRadius: outerOnLeft ? outerRadius : innerRadius
         bottomLeftRadius: topLeftRadius
         topRightRadius: outerOnLeft ? innerRadius : outerRadius
         bottomRightRadius: topRightRadius
-        border.width: root.variant === "outlined" ? root.metrics.outlineWidth : 0
+        border.width: !Style.flatComponents && root.variant === "outlined" ? root.metrics.outlineWidth : 0
         border.color: enabled ? Style.outlineVariant : Style.onSurface_12
 
         Behavior on innerRadius {
-            enabled: !Style.reduceMotion && Style.currentAnimationSpeed !== Style.AnimationSpeed.None
+            enabled: !Style.flatComponents && !Style.reduceMotion && Style.currentAnimationSpeed !== Style.AnimationSpeed.None
             DAnim {
                 duration: Style.expressiveDurations.expressiveEffects
                 easing.bezierCurve: Style.expressiveCurves.standard
@@ -166,7 +172,7 @@ Item {
             anchors.topMargin: segment.topInset
             anchors.bottomMargin: segment.bottomInset
             z: -1
-            active: root.variant === "elevated" && segment.enabled && Style.elevationEnabled
+            active: !Style.flatComponents && root.variant === "elevated" && segment.enabled && Style.elevationEnabled
             sourceComponent: ElevationShadow {
                 level: segment.hovered ? Style.elevationLevel2 : Style.elevationLevel1
                 targetColor: segment.color
@@ -181,7 +187,7 @@ Item {
             anchors.fill: parent
             anchors.topMargin: segment.topInset
             anchors.bottomMargin: segment.bottomInset
-            visible: segment.isTrailing && root.expanded && segment.enabled
+            visible: !Style.flatComponents && segment.isTrailing && root.expanded && segment.enabled
             topLeftRadius: segment.topLeftRadius
             topRightRadius: segment.topRightRadius
             bottomLeftRadius: segment.bottomLeftRadius

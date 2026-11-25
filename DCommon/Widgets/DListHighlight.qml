@@ -6,10 +6,10 @@ Rectangle {
     property bool firstInGroup: true
     property bool lastInGroup: true
     color: Style.selectedContainer
-    radius: Style.groupedListInnerRadius
-    topLeftRadius: firstInGroup ? Style.groupedListOuterRadius : radius
+    radius: Style.flatComponents ? Math.min(Style.windowRadius, height / 2) : Style.groupedListInnerRadius
+    topLeftRadius: Style.flatComponents ? radius : firstInGroup ? Style.groupedListOuterRadius : radius
     topRightRadius: topLeftRadius
-    bottomLeftRadius: lastInGroup ? Style.groupedListOuterRadius : radius
+    bottomLeftRadius: Style.flatComponents ? radius : lastInGroup ? Style.groupedListOuterRadius : radius
     bottomRightRadius: bottomLeftRadius
 
     Behavior on x {

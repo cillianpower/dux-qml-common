@@ -43,13 +43,13 @@ StyledButton {
     focusPolicy: activeFocus || isSelected ? Qt.StrongFocus : Qt.ClickFocus
     Accessible.role: Accessible.ListItem
     Accessible.selected: isSelected
-    color: externalHighlight ? "transparent" : isSelected || visualFocus ? Style.selectedContainer : root.surfaceColor
-    border.width: externalHighlight ? 0 : Style.layerOutlineWidth
+    color: externalHighlight ? "transparent" : isSelected || visualFocus ? Style.selectedContainer : Style.flatComponents ? "transparent" : root.surfaceColor
+    border.width: Style.flatComponents || externalHighlight ? 0 : Style.layerOutlineWidth
     border.color: Style.outlineMedium
-    radius: Style.groupedListInnerRadius
-    topLeftRadius: firstInGroup ? Style.groupedListOuterRadius : radius
+    radius: Style.flatComponents ? Math.min(Style.windowRadius, height / 2) : Style.groupedListInnerRadius
+    topLeftRadius: Style.flatComponents ? radius : firstInGroup ? Style.groupedListOuterRadius : radius
     topRightRadius: topLeftRadius
-    bottomLeftRadius: lastInGroup ? Style.groupedListOuterRadius : radius
+    bottomLeftRadius: Style.flatComponents ? radius : lastInGroup ? Style.groupedListOuterRadius : radius
     bottomRightRadius: bottomLeftRadius
 
     Loader {
@@ -63,8 +63,8 @@ StyledButton {
             height: root.height
             visible: root.visible && !root._pooled
             opacity: root.opacity
-            color: root.surfaceColor
-            border.width: Style.layerOutlineWidth
+            color: Style.flatComponents ? "transparent" : root.surfaceColor
+            border.width: Style.flatComponents ? 0 : Style.layerOutlineWidth
             border.color: Style.outlineMedium
             topLeftRadius: root.topLeftRadius
             topRightRadius: root.topRightRadius
